@@ -45,7 +45,41 @@ class FlaskAccount:
 
     @staticmethod
     def sign_in():
-        pass
+        logging.info('execute account sign in')
+
+        email = request.args.get('email')
+        password = request.args.get('password')
+
+        account = Account.objects(email=email).only(
+            'password',
+            'token'
+        ).first()
+
+        if account:
+            if pbkdf2_sha512.verify(password, account['password']):
+                logging.info('sign in success')
+
+                token_encode = jwt.encode({
+                    'id': str(account.pk),
+                    'token': account.token
+                }, os.getenv('JWT_TOKEN_SECRET'), algorithm='HS256')
+
+                return Response(dumps({
+                    'status': 'OK',
+                    'token': token_encode.decode('ascii')
+                }), mimetype='text/json'), 200
+            else:
+                logging.info('Sign in unauthorized: wrong password')
+
+                return Response(dumps({
+                    'status': 'Unauthorized',
+                }), mimetype='text/json'), 401
+        else:
+            logging.info('Sign in unauthorized: account not exists')
+
+            return Response(dumps({
+                'status': 'Unauthorized',
+            }), mimetype='text/json'), 401
 
     @staticmethod
     def sign_out():
