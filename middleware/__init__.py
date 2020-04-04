@@ -32,6 +32,7 @@ class DBConnect:
                 authentication_mechanism=os.getenv('MONGO_MECHANISM')
             )
             logging.info('Connection to mongo success')
+            return self.app(environ, start_response)
 
         except Exception as e:
             logging.info('Connection to mongo failed')
