@@ -10,4 +10,5 @@
 | MONGO_PASSWORD          | None                          |
 | MONGO_AUTH_SOURCE       | None                          |
 | MONGO_MECHANISM         | None                          |
+| JWT_TOKEN_SECRET        | None                          |
 
