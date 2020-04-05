@@ -2,6 +2,7 @@ import logging
 from flask import Flask
 
 from library.flask.account import FlaskAccount
+from library.flask.token import FlaskToken
 from middleware import AuthTokenCheck, DBConnect
 
 logging.basicConfig(level=logging.DEBUG)
@@ -14,6 +15,8 @@ app.add_url_rule('/account', view_func=FlaskAccount.create, methods=['PUT'])
 app.add_url_rule('/account', view_func=FlaskAccount.update, methods=['POST'])
 app.add_url_rule('/account/sign-in', view_func=FlaskAccount.sign_in, methods=['GET'])
 app.add_url_rule('/account/sign-out', view_func=FlaskAccount.sign_out, methods=['GET'])
+
+app.add_url_rule('/verify', view_func=FlaskToken.verify, methods=['GET'])
 
 if __name__ == '__main__':
     app.run('0.0.0.0', '5000', debug=True)
