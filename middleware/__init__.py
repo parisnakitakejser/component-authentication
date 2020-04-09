@@ -3,6 +3,8 @@ import logging
 from werkzeug.wrappers import Request, Response
 from mongoengine import connect
 
+from library.auth import AuthToken
+
 
 class AuthTokenCheck:
     def __init__(self, app):
@@ -11,7 +13,27 @@ class AuthTokenCheck:
     def __call__(self, environ, start_response):
         request = Request(environ)
 
-        logging.info('AuthToken check - OK')
+        environ['auth_token'] = None
+        environ['auth_success'] = None
+        environ['session_id'] = None
+
+        auth_token = request.headers['X-AUTH-TOKEN'] if 'X-AUTH-TOKEN' in request.headers else None
+        if auth_token is not None:
+            logging.info('middleware: token found in headers, try to verify it')
+
+            token_verify = AuthToken.verify(token=auth_token)
+
+            if token_verify:
+                logging.info('middleware: token verify success')
+                environ['auth_token'] = AuthToken.decode_token(auth_token)
+                environ['auth_success'] = True
+                environ['session_id'] = request.headers['X-SESSION-ID'] if 'X-SESSION-ID' in request.headers else None
+
+            else:
+                logging.info('middleware: token verify failed')
+                environ['auth_success'] = False
+        else:
+            logging.info('middleware: token not found in headers')
 
         return self.app(environ, start_response)
 
