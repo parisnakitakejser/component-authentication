@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
     component-authentication:
-        image: component-authentication
+        image: parisnk/component-authentication
         ports:
             - "5000:5000"
 

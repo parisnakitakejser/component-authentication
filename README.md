@@ -8,9 +8,10 @@
 
 **🌟 Community 🌟**
 
-- Discord: https://discord.gg/6tcWjxV
 - Subscribe my channel: https://www.youtube.com/c/ParisNakitaKejser?sub_confirmation=1
 - Youtube playlist: https://www.youtube.com/playlist?list=PLLhEJK7fQIxBd-HloE6l6mQ810mcnPV-L
+- Private website: https://www.pnk.sh
+- Discord: https://discord.gg/6tcWjxV
 - Donate: https://www.patreon.com/parisnakitakejser
 
 
@@ -26,6 +27,8 @@
 | MONGO_AUTH_SOURCE       | None                          |
 | MONGO_MECHANISM         | None                          |
 | JWT_TOKEN_SECRET        | None                          |
+| SESSION_SECRET_KEY      | None                          |
+| SESSION_LIFETIME        | 604800                        |
 
 **Build new images**
 
@@ -39,7 +42,7 @@ If you found eny bugs and want to build your own images, you can do it very quic
     
     services:
         component-authentication:
-            image: component-authentication
+            image: parisnk/component-authentication
             ports:
                 - "5000:5000"
     
