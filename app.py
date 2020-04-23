@@ -24,6 +24,8 @@ app.add_url_rule('/session', view_func=FlaskSession.get, endpoint='session_get',
 app.add_url_rule('/session', view_func=FlaskSession.update, endpoint='session_update', methods=['POST'])
 
 app.add_url_rule('/provider', view_func=FlaskProvider.create, endpoint='provider_create', methods=['PUT'])
+app.add_url_rule('/provider', view_func=FlaskProvider.update, endpoint='provider_update', methods=['POST'])
+app.add_url_rule('/provider', view_func=FlaskProvider.get, endpoint='provider_get', methods=['GET'])
 
 if __name__ == '__main__':
     app.run('0.0.0.0', '5000', debug=True)
