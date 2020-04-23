@@ -4,6 +4,7 @@ from flask import Flask
 from library.flask.account import FlaskAccount
 from library.flask.token import FlaskToken
 from library.flask.session import FlaskSession
+from library.flask.provider import FlaskProvider
 from middleware import AuthTokenCheck, DBConnect
 
 logging.basicConfig(level=logging.DEBUG)
@@ -21,6 +22,8 @@ app.add_url_rule('/verify', view_func=FlaskToken.verify, endpoint='token_verify'
 
 app.add_url_rule('/session', view_func=FlaskSession.get, endpoint='session_get', methods=['GET'])
 app.add_url_rule('/session', view_func=FlaskSession.update, endpoint='session_update', methods=['POST'])
+
+app.add_url_rule('/provider', view_func=FlaskProvider.create, endpoint='provider_create', methods=['PUT'])
 
 if __name__ == '__main__':
     app.run('0.0.0.0', '5000', debug=True)

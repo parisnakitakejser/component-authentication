@@ -4,7 +4,7 @@ from werkzeug.wrappers import Request, Response
 from mongoengine import connect
 
 from library.auth import AuthToken
-
+from odm.account import Account
 
 class AuthTokenCheck:
     def __init__(self, app):
@@ -28,6 +28,10 @@ class AuthTokenCheck:
                 environ['auth_token'] = AuthToken.decode_token(auth_token)
                 environ['auth_success'] = True
                 environ['session_id'] = request.headers['X-SESSION-ID'] if 'X-SESSION-ID' in request.headers else None
+
+                account = Account.objects.get(pk=environ['auth_token']['id'])
+                environ['administrator'] = account.administrator
+                environ['providers'] = account.providers
 
             else:
                 logging.info('middleware: token verify failed')
