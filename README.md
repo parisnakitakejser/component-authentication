@@ -4,7 +4,7 @@
 
 - GitHub - profil: https://github.com/parisnakitakejser
 - GitHub - Source code: https://github.com/parisnakitakejser/component-authentication
-- Docker Hub: https://hub.docker.com/repository/docker/parisnk/component-authentication
+- Docker Hub: https://hub.docker.com/r/parisnk/component-authentication
 
 **🌟 Community 🌟**
 
