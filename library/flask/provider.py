@@ -76,4 +76,42 @@ class FlaskProvider:
 
     @staticmethod
     def update():
-        pass
+        logging.info('update provider')
+
+        provider_id = request.args.get('id')
+
+        if request.environ['auth_success']:
+            try:
+                provider = Provider(provider_id=provider_id)
+            except DoesNotExist:
+                return Response(dumps({
+                    'status': 'Not Found'
+                }), mimetype='text/json'), 404
+
+            if request.environ['administrator'] or ObjectId(request.environ['auth_token']['id']) in provider.administrators:
+                response, validation = provider.update(fields=request.get_json())
+                if response:
+                    logging.info('provider update success')
+                    return Response(dumps({
+                        'status': 'OK',
+                    }), mimetype='text/json'), 200
+
+                else:
+                    logging.info('provider update failed - validation error')
+                    return Response(dumps({
+                        'status': 'Bad Request',
+                        'validation': validation
+                    }), mimetype='text/json'), 400
+
+            else:
+                logging.info('update provider - account is not a administrator')
+
+                return Response(dumps({
+                    'status': 'Forbidden'
+                }), mimetype='text/json'), 403
+        else:
+            logging.info('update provider - auth token not success')
+
+            return Response(dumps({
+                'status': 'Unauthorized'
+            }), mimetype='text/json'), 401
