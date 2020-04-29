@@ -1,4 +1,4 @@
-# component-authentication
+![alt text](tools/logo/authentication.png)
 
 **Project**
 
