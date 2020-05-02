@@ -5,11 +5,14 @@ from library.flask.account import FlaskAccount
 from library.flask.token import FlaskToken
 from library.flask.session import FlaskSession
 from library.flask.provider import FlaskProvider
+
 from middleware import AuthTokenCheck, DBConnect
+from middleware.providerVerify import ProviderVerify
 
 logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
+app.wsgi_app = ProviderVerify(app.wsgi_app)
 app.wsgi_app = AuthTokenCheck(app.wsgi_app)
 app.wsgi_app = DBConnect(app.wsgi_app)
 

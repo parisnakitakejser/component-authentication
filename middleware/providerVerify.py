@@ -1,0 +1,75 @@
+from werkzeug.wrappers import Request, Response
+from bson.objectid import ObjectId
+from mongoengine import DoesNotExist
+import logging
+
+from odm.provider import Provider as OdmProvider
+
+
+class ProviderVerify:
+    def __init__(self, app):
+        self.app = app
+
+    def __call__(self, environ, start_response):
+        request = Request(environ)
+        logging.info('middleware: Provider Verify')
+
+        request_method = request.environ['REQUEST_METHOD']
+        request_path = request.environ['PATH_INFO']
+        request_verify = f'{request_path}#{request_method}'
+
+        provider_id = request.headers['X-PROVIDER-ID'] if 'X-PROVIDER-ID' in request.headers else request.args.get('id')
+        provider_secret = request.headers['X-PROVIDER-SECRET'] if 'X-PROVIDER-SECRET' in request.headers else None
+
+        environ['provider'] = None
+
+        if request_verify not in ['/account/sign-in#GET', '/account#PUT']:
+            if not request.environ['administrator'] and provider_id is None:
+              logging.info('middleware: provider_id not found in header or query params')
+
+              res = Response(u'X-PROVIDER-ID not found in headers or id in query params', mimetype='text/plain', status=501)
+
+              return res(environ, start_response)
+
+            elif request.environ['administrator']:
+                logging.info('middleware: Account is administrator')
+                if provider_id is not None:
+                    try:
+                        provider = OdmProvider.objects.get(pk=provider_id)
+                        environ['provider'] = {
+                            'name': provider.name,
+                            'id': provider_id
+                        }
+                    except DoesNotExist:
+                        logging.info('middleware: administrator - provider not found in database.')
+                        res = Response(u'Provider not found with this provider_id', mimetype='text/plain', status=403)
+
+                        return res(environ, start_response)
+
+            else:
+                logging.info('middleware: Account is normal')
+
+                if ObjectId(provider_id) in request.environ['providers']:
+                    logging.info('middleware: Account match provider_id and allowed to access')
+
+                    try:
+                        provider = OdmProvider.objects.get(pk=provider_id, secret_key_private=provider_secret)
+                        environ['provider'] = {
+                            'name': provider.name,
+                            'id': provider_id
+                        }
+                    except DoesNotExist:
+                        logging.info('middleware: provider secret or provider_id did not match in the database.')
+                        res = Response(u'Account did not have access for this provider', mimetype='text/plain', status=403)
+
+                        return res(environ, start_response)
+
+                else:
+                    logging.info('middleware: Account do not match eny provider_id, and do not have access')
+                    res = Response(u'Account did not have access for this provider', mimetype='text/plain', status=403)
+
+                    return res(environ, start_response)
+        else:
+            logging.info('middleware: Account try to sign in or create a new account')
+
+        return self.app(environ, start_response)
