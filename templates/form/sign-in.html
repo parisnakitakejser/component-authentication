@@ -6,9 +6,11 @@
 
 {% block content %}
 <form method="post">
-    <div class="alert alert-danger">
-        Login information is incorrect!
+    {% if alert_show: %}
+    <div class="alert {{alert_class}}">
+        {{alert_content}}
     </div>
+    {% endif %}
 
     <label>E-mail</label>
     <input type="text" name="email" id="email" autofocus required />

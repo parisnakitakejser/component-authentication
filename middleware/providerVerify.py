@@ -3,6 +3,7 @@ from bson.objectid import ObjectId
 from mongoengine import DoesNotExist
 import logging
 
+from library.accessToken import AccessToken
 from odm.provider import Provider as OdmProvider
 
 
@@ -37,6 +38,35 @@ class ProviderVerify:
         elif request_path.lower().startswith(provider_public_check):
             logging.info(f'middleware: {request_path.lower()} - do public secret or access token check for this path')
 
+            access_token = request.args.get('access_token')
+            provider_public = request.args.get('token')
+
+            if access_token is not None:
+                pass
+
+            else:
+                logging.info('middleware: provider check prepare')
+
+                try:
+                    provider = OdmProvider.objects.get(pk=provider_id, secret_key_public=provider_public)
+                    logging.info('middleware: provider check - exists and ready')
+
+                    access_token = AccessToken()
+                    token = access_token.generate(provider_id=provider_id)
+
+                    status = '302 Found'
+                    headers = [
+                        ('Location', f'{request_path}?access_token={token}'),
+                        ('Content-Length', '0')
+                    ]
+
+                    start_response(status, headers)
+                    return ['']
+
+                except DoesNotExist:
+                    logging.info('middleware: provider not found based on provider_id and public key')
+                    res = Response(u'Forbidden', mimetype='text/plain', status=403)
+                    return res(environ, start_response)
         else:
             if request_verify not in ['/account/sign-in#GET', '/account#PUT']:
                 if not request.environ['administrator'] and provider_id is None:
