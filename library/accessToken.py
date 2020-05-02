@@ -3,6 +3,7 @@ from bson.objectid import ObjectId
 from datetime import datetime, timedelta
 import random
 import string
+from mongoengine import DoesNotExist
 
 from odm.accessToken import AccessToken as OdmAccessToken
 
@@ -10,8 +11,10 @@ from odm.accessToken import AccessToken as OdmAccessToken
 class AccessToken:
     def __init__(self, token: Union[str, None] = None) -> None:
         if token is not None:
-            pass
-
+            try:
+                self.__access_token = OdmAccessToken.objects.get(access_token=token)
+            except DoesNotExist:
+                raise DoesNotExist()
         else:
             self.__access_token = OdmAccessToken()
 
@@ -25,4 +28,12 @@ class AccessToken:
         return self.__access_token.access_token
 
     def verify(self) -> (bool, Union[ObjectId, None]):
-        pass
+        if self.__access_token.expired_at >= datetime.utcnow():
+            self.__access_token.update(**{
+                'expired_at': datetime.utcnow() + timedelta(minutes=30)
+            })
+
+            return True, self.__access_token.provider_id
+
+        else:
+            return False, None

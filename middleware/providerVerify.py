@@ -35,6 +35,7 @@ class ProviderVerify:
 
         if request_path.lower().startswith(none_provider_check):
             logging.info(f'middleware: {request_path.lower()} - do not provider check this path')
+
         elif request_path.lower().startswith(provider_public_check):
             logging.info(f'middleware: {request_path.lower()} - do public secret or access token check for this path')
 
@@ -42,7 +43,26 @@ class ProviderVerify:
             provider_public = request.args.get('token')
 
             if access_token is not None:
-                pass
+                try:
+                    access_token = AccessToken(token=access_token)
+                    verify_response, provider_id = access_token.verify()
+
+                    if not verify_response:
+                        logging.info('Token is expired')
+
+                        res = Response(u'Gone', mimetype='text/plain', status=410)
+                        return res(environ, start_response)
+
+                    else:
+                        environ['provider'] = {
+                            'id': provider_id
+                        }
+
+                except DoesNotExist:
+                    logging.info('Token not found or expired')
+                    res = Response(u'Gone', mimetype='text/plain', status=410)
+                    return res(environ, start_response)
+
 
             else:
                 logging.info('middleware: provider check prepare')
