@@ -23,53 +23,68 @@ class ProviderVerify:
 
         environ['provider'] = None
 
-        if request_verify not in ['/account/sign-in#GET', '/account#PUT']:
-            if not request.environ['administrator'] and provider_id is None:
-              logging.info('middleware: provider_id not found in header or query params')
+        none_provider_check = (
+            '/static/',
+            '/favicon.ico'
+        )
 
-              res = Response(u'X-PROVIDER-ID not found in headers or id in query params', mimetype='text/plain', status=501)
+        provider_public_check = (
+            '/form/'
+        )
 
-              return res(environ, start_response)
+        if request_path.lower().startswith(none_provider_check):
+            logging.info(f'middleware: {request_path.lower()} - do not provider check this path')
+        elif request_path.lower().startswith(provider_public_check):
+            logging.info(f'middleware: {request_path.lower()} - do public secret or access token check for this path')
 
-            elif request.environ['administrator']:
-                logging.info('middleware: Account is administrator')
-                if provider_id is not None:
-                    try:
-                        provider = OdmProvider.objects.get(pk=provider_id)
-                        environ['provider'] = {
-                            'name': provider.name,
-                            'id': provider_id
-                        }
-                    except DoesNotExist:
-                        logging.info('middleware: administrator - provider not found in database.')
-                        res = Response(u'Provider not found with this provider_id', mimetype='text/plain', status=403)
+        else:
+            if request_verify not in ['/account/sign-in#GET', '/account#PUT']:
+                if not request.environ['administrator'] and provider_id is None:
+                  logging.info('middleware: provider_id not found in header or query params')
 
-                        return res(environ, start_response)
+                  res = Response(u'X-PROVIDER-ID not found in headers or id in query params', mimetype='text/plain', status=501)
 
-            else:
-                logging.info('middleware: Account is normal')
+                  return res(environ, start_response)
 
-                if ObjectId(provider_id) in request.environ['providers']:
-                    logging.info('middleware: Account match provider_id and allowed to access')
+                elif request.environ['administrator']:
+                    logging.info('middleware: Account is administrator')
+                    if provider_id is not None:
+                        try:
+                            provider = OdmProvider.objects.get(pk=provider_id)
+                            environ['provider'] = {
+                                'name': provider.name,
+                                'id': provider_id
+                            }
+                        except DoesNotExist:
+                            logging.info('middleware: administrator - provider not found in database.')
+                            res = Response(u'Provider not found with this provider_id', mimetype='text/plain', status=403)
 
-                    try:
-                        provider = OdmProvider.objects.get(pk=provider_id, secret_key_private=provider_secret)
-                        environ['provider'] = {
-                            'name': provider.name,
-                            'id': provider_id
-                        }
-                    except DoesNotExist:
-                        logging.info('middleware: provider secret or provider_id did not match in the database.')
+                            return res(environ, start_response)
+
+                else:
+                    logging.info('middleware: Account is normal')
+
+                    if ObjectId(provider_id) in request.environ['providers']:
+                        logging.info('middleware: Account match provider_id and allowed to access')
+
+                        try:
+                            provider = OdmProvider.objects.get(pk=provider_id, secret_key_private=provider_secret)
+                            environ['provider'] = {
+                                'name': provider.name,
+                                'id': provider_id
+                            }
+                        except DoesNotExist:
+                            logging.info('middleware: provider secret or provider_id did not match in the database.')
+                            res = Response(u'Account did not have access for this provider', mimetype='text/plain', status=403)
+
+                            return res(environ, start_response)
+
+                    else:
+                        logging.info('middleware: Account do not match eny provider_id, and do not have access')
                         res = Response(u'Account did not have access for this provider', mimetype='text/plain', status=403)
 
                         return res(environ, start_response)
-
-                else:
-                    logging.info('middleware: Account do not match eny provider_id, and do not have access')
-                    res = Response(u'Account did not have access for this provider', mimetype='text/plain', status=403)
-
-                    return res(environ, start_response)
-        else:
-            logging.info('middleware: Account try to sign in or create a new account')
+            else:
+                logging.info('middleware: Account try to sign in or create a new account')
 
         return self.app(environ, start_response)

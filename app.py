@@ -5,6 +5,7 @@ from library.flask.account import FlaskAccount
 from library.flask.token import FlaskToken
 from library.flask.session import FlaskSession
 from library.flask.provider import FlaskProvider
+from library.flask.form import FlaskForm
 
 from middleware import AuthTokenCheck, DBConnect
 from middleware.providerVerify import ProviderVerify
@@ -29,6 +30,9 @@ app.add_url_rule('/session', view_func=FlaskSession.update, endpoint='session_up
 app.add_url_rule('/provider', view_func=FlaskProvider.create, endpoint='provider_create', methods=['PUT'])
 app.add_url_rule('/provider', view_func=FlaskProvider.update, endpoint='provider_update', methods=['POST'])
 app.add_url_rule('/provider', view_func=FlaskProvider.get, endpoint='provider_get', methods=['GET'])
+
+app.add_url_rule('/form/sign-in', view_func=FlaskForm.sign_in, endpoint='form_sign_in', methods=['GET'])
+app.add_url_rule('/form/sign-in', view_func=FlaskForm.sign_in, endpoint='form_sign_in', methods=['POST'])
 
 if __name__ == '__main__':
     app.run('0.0.0.0', '5000', debug=True)
