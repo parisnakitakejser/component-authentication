@@ -7,7 +7,7 @@ from mongoengine import errors
 import uuid
 import jwt
 
-from odm.account import Account
+from library.account import Account
 
 
 class FlaskAccount:
@@ -50,32 +50,19 @@ class FlaskAccount:
         email = request.args.get('email')
         password = request.args.get('password')
 
-        account = Account.objects(email=email).only(
-            'password',
-            'token'
-        ).first()
+        account = Account()
+        account_verify, account_data = account.verify(email=email, password=password)
 
-        if account:
-            if pbkdf2_sha512.verify(password, account['password']):
-                logging.info('sign in success')
+        if account_verify:
+            logging.info('Sign in authorized: login success')
 
-                token_encode = jwt.encode({
-                    'id': str(account.pk),
-                    'token': account.token
-                }, os.getenv('JWT_TOKEN_SECRET'), algorithm='HS256')
+            return Response(dumps({
+                'status': 'OK',
+                'token': account_data['token']
+            }), mimetype='text/json'), 200
 
-                return Response(dumps({
-                    'status': 'OK',
-                    'token': token_encode.decode('ascii')
-                }), mimetype='text/json'), 200
-            else:
-                logging.info('Sign in unauthorized: wrong password')
-
-                return Response(dumps({
-                    'status': 'Unauthorized',
-                }), mimetype='text/json'), 401
         else:
-            logging.info('Sign in unauthorized: account not exists')
+            logging.info('Sign in unauthorized: account not exists or password is wrong')
 
             return Response(dumps({
                 'status': 'Unauthorized',

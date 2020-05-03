@@ -22,7 +22,7 @@ class AccessToken:
         self.__access_token.access_token = ''.join(random.choices(string.ascii_letters + string.digits, k=128))
         self.__access_token.provider_id = provider_id
         self.__access_token.expired_at = datetime.utcnow() + timedelta(minutes=30)
-        self.__access_token.expired_at = datetime.utcnow()
+        self.__access_token.created_at = datetime.utcnow()
         self.__access_token.save()
 
         return self.__access_token.access_token
@@ -30,7 +30,8 @@ class AccessToken:
     def verify(self) -> (bool, Union[ObjectId, None]):
         if self.__access_token.expired_at >= datetime.utcnow():
             self.__access_token.update(**{
-                'expired_at': datetime.utcnow() + timedelta(minutes=30)
+                'expired_at': datetime.utcnow() + timedelta(minutes=30),
+                'updated_at': datetime.utcnow()
             })
 
             return True, self.__access_token.provider_id
