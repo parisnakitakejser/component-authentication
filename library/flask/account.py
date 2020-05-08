@@ -8,6 +8,7 @@ import uuid
 import jwt
 
 from library.account import Account
+from odm.account import Account as OdmAccount
 
 
 class FlaskAccount:
@@ -17,7 +18,7 @@ class FlaskAccount:
         logging.info('Prepare data for create a new account')
 
         try:
-            account = Account()
+            account = OdmAccount()
             account.email = json_data['email']
             account.password = pbkdf2_sha512.hash(json_data['password'])
             account.token = str(uuid.uuid4())

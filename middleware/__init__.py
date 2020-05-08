@@ -6,6 +6,7 @@ from mongoengine import connect
 from library.auth import AuthToken
 from odm.account import Account
 
+
 class AuthTokenCheck:
     def __init__(self, app):
         self.app = app
