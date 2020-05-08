@@ -3,9 +3,13 @@ from bson.objectid import ObjectId
 from datetime import datetime, timedelta
 import random
 import string
+import logging
 from mongoengine import DoesNotExist
 
+from library.auth import AuthToken
+
 from odm.accessToken import AccessToken as OdmAccessToken
+from odm.provider import Provider as OdmProvider
 
 
 class AccessToken:
@@ -38,3 +42,35 @@ class AccessToken:
 
         else:
             return False, None
+
+    def verify_access_token(self, provider_id: str, provider_secret: str) -> (bool, dict):
+        if self.__access_token.provider_id == ObjectId(provider_id):
+            verify, _ = self.verify()
+
+            if not verify:
+                logging.info('access token expired')
+                return False, {}
+
+            try:
+                OdmProvider.objects.get(pk=provider_id, secret_key_private=provider_secret)
+                logging.info('provider_id and secret_key allowed to get access for this provider')
+            except DoesNotExist:
+                logging.info('provider_id and secret_key do not match')
+                return False, {}
+
+            if AuthToken.verify(token=self.__access_token.account_token):
+                token = AuthToken.decode_token(token=self.__access_token.account_token)
+
+                if 'token' in token:
+                    del token['token']
+                    
+                return True, {
+                    'jwt': self.__access_token.access_token,
+                    'data': token
+                }
+            else:
+                logging.info('account token is not verify')
+                return False, {}
+        else:
+            logging.info('provider_id not match access_token provider_id')
+            return False, {}

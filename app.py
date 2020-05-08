@@ -23,6 +23,7 @@ app.add_url_rule('/account/sign-in', view_func=FlaskAccount.sign_in, endpoint='a
 app.add_url_rule('/account/sign-out', view_func=FlaskAccount.sign_out, endpoint='account_sign_out', methods=['GET'])
 
 app.add_url_rule('/verify', view_func=FlaskToken.verify, endpoint='token_verify', methods=['GET'])
+app.add_url_rule('/verify/access-token', view_func=FlaskToken.verify_access_token, endpoint='token_verify_access_token', methods=['GET'])
 
 app.add_url_rule('/session', view_func=FlaskSession.get, endpoint='session_get', methods=['GET'])
 app.add_url_rule('/session', view_func=FlaskSession.update, endpoint='session_update', methods=['POST'])

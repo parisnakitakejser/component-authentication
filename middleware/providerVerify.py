@@ -94,7 +94,13 @@ class ProviderVerify:
                     res = Response(u'Forbidden', mimetype='text/plain', status=403)
                     return res(environ, start_response)
         else:
-            if request_verify not in ['/account/sign-in#GET', '/account#PUT']:
+            none_provider_check = [
+                '/account/sign-in#GET',
+                '/account#PUT',
+                '/verify/access-token#GET'
+            ]
+
+            if request_verify not in none_provider_check:
                 if not request.environ['administrator'] and provider_id is None:
                   logging.info('middleware: provider_id not found in header or query params')
 
@@ -102,7 +108,7 @@ class ProviderVerify:
 
                   return res(environ, start_response)
 
-                elif request.environ['administrator']:
+                elif request.environ.get('administrator'):
                     logging.info('middleware: Account is administrator')
                     if provider_id is not None:
                         try:
@@ -120,7 +126,7 @@ class ProviderVerify:
                 else:
                     logging.info('middleware: Account is normal')
 
-                    if ObjectId(provider_id) in request.environ['providers']:
+                    if request.environ.get('providers') and ObjectId(provider_id) in request.environ.get('providers'):
                         logging.info('middleware: Account match provider_id and allowed to access')
 
                         try:
