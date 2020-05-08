@@ -2,6 +2,7 @@ from typing import Union
 import random
 import string
 import logging
+from urllib.parse import urlencode
 from mongoengine import DoesNotExist
 
 from odm.provider import Provider as OdmProvider
@@ -91,3 +92,18 @@ class Provider:
             'allow_guest_signup': self.__provider.allow_guest_signup,
             'deactivated': self.__provider.deactivated,
         }
+
+    def get_accept_return_url(self, args: dict) -> str:
+        if 'rel' in args:
+            response_url = args['rel']
+            del args['rel']
+
+        else:
+            response_url = self.__provider.settings.accept_url
+
+        response_url = response_url if response_url is not None else ''
+
+        url_prefix = 'https://' if self.__provider.settings.site_ssl else 'http://'
+        site_url = self.__provider.settings.site_url
+
+        return f'{url_prefix}{site_url}{response_url}?{urlencode(args)}'

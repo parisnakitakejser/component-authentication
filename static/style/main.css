@@ -25,6 +25,12 @@ body {
     color: #155724;
 }
 
+.alert-warning {
+    background: #fff3cd;
+    border: 1px solid #ffeeba;
+    color: #856404;
+}
+
 .container {
     position: fixed;
     top: 50%;

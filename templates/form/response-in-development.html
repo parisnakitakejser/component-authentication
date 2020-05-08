@@ -1,0 +1,18 @@
+{% extends 'main.html' %}
+
+{% block header %}
+    <h1>Access - Accepted</h1>
+{% endblock %}
+
+{% block content %}
+<strong>Copy url to development environment</strong><br />
+<div style="background: lightgray; padding: 3px; word-break: break-all;">{{site_url}}</div>
+
+<br />
+<br />
+
+<div class="alert alert-warning">
+    You hit this pages becures the provider are in development mode.
+    Disable development mode to automatic return to this url next time you sign in.
+</div>
+{% endblock %}

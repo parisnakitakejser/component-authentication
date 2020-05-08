@@ -1,6 +1,7 @@
 from werkzeug.wrappers import Request, Response
 from bson.objectid import ObjectId
 from mongoengine import DoesNotExist
+from urllib.parse import urlencode
 import logging
 
 from library.accessToken import AccessToken
@@ -74,9 +75,14 @@ class ProviderVerify:
                     access_token = AccessToken()
                     token = access_token.generate(provider_id=provider_id)
 
+                    url_args = dict(request.args)
+                    del url_args['id']
+                    del url_args['token']
+                    url_args['access_token'] = token
+
                     status = '302 Found'
                     headers = [
-                        ('Location', f'{request_path}?access_token={token}'),
+                        ('Location', f'{request_path}?{urlencode(url_args)}'),
                         ('Content-Length', '0')
                     ]
 
