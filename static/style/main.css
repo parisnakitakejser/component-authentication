@@ -55,13 +55,26 @@ input[type='text'], input[type='password'] {
     font-size: 16px;
 }
 
-button {
+.btn {
     width: 100%;
     border-radius: 15px;
     padding: 5px 0;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.btn-primary {
     background: #0062cc;
     border: 1px solid #005cbf;
     color: white;
-    font-size: 16px;
-    cursor: pointer;
+}
+.btn-success {
+    background: #1e7e34;
+    border: 1px solid #1c7430;
+    color: white;
+}
+.btn-danger {
+    background: #bd2130;
+    border: 1px solid #b21f2d;
+    color: white;
 }

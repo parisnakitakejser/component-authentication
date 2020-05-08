@@ -15,7 +15,8 @@ class Account:
 
         account = OdmAccount.objects(email=email).only(
             'password',
-            'token'
+            'token',
+            'providers'
         ).first()
 
         if account:
@@ -30,7 +31,9 @@ class Account:
                 }, os.getenv('JWT_TOKEN_SECRET'), algorithm='HS256')
 
                 return True, {
-                    'token': token_encode.decode('ascii')
+                    'token': token_encode.decode('ascii'),
+                    'providers': account.providers,
+                    'id': str(account.pk),
                 }
             else:
                 logging.info('login failure')

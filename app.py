@@ -33,6 +33,9 @@ app.add_url_rule('/provider', view_func=FlaskProvider.get, endpoint='provider_ge
 
 app.add_url_rule('/form/sign-in', view_func=FlaskForm.sign_in, endpoint='form_sign_in', methods=['GET'])
 app.add_url_rule('/form/sign-in', view_func=FlaskForm.sign_in, endpoint='form_sign_in', methods=['POST'])
+app.add_url_rule('/form/confirm-access', view_func=FlaskForm.confirm_access, endpoint='form_confrim_access', methods=['GET'])
+app.add_url_rule('/form/confirm-access', view_func=FlaskForm.confirm_access, endpoint='form_confrim_access', methods=['POST'])
+app.add_url_rule('/form/response-in-development', view_func=FlaskForm.response_in_development, endpoint='form_response_in_development', methods=['GET'])
 
 if __name__ == '__main__':
     app.run('0.0.0.0', '5000', debug=True)

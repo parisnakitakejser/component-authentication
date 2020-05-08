@@ -1,0 +1,43 @@
+{% extends 'main.html' %}
+
+{% block header %}
+    <h1>Grant access</h1>
+
+<div>
+    <div style="float: left; width: 75px; padding-right: 10px;">
+        <img src="https://placekitten.com/250/250" style="max-width: 100%;" />
+    </div>
+    <div style="float: left;">
+        <strong>{{name}}</strong><br />
+        <small>Site url: {{site_url}}</small>
+    </div>
+    <div style="clear: both;"></div>
+</div>
+{% endblock %}
+
+{% block content %}
+<form method="post">
+    <div style="margin: 10px 0;">
+        <label for="privacy-policy" style="cursor: pointer;">
+            <input type="checkbox" id="privacy-policy" /> Accept <a href="">Privacy Policy</a>
+        </label>
+
+        <label for="terms-of-services" style="cursor: pointer;">
+            <input type="checkbox" id="terms-of-services" /> Accept <a href="">Terms of Services</a>
+        </label>
+    </div>
+
+    <div>
+        <div style="width: 50%; float: left; display: block">
+            <button type="submit" class="btn btn-danger" name="btn-trigger" value="cancel">
+                Cancel
+            </button>
+        </div>
+        <div style="width: 50%; float: left; display: block">
+            <button type="submit" class="btn btn-success" name="btn-trigger" value="accept">
+                Accept
+            </button>
+        </div>
+    </div>
+</form>
+{% endblock %}
