@@ -1,5 +1,8 @@
 click==7.1.1
+dnspython==1.16.0
+email-validator==1.1.0
 Flask==1.1.2
+idna==2.9
 itsdangerous==1.1.0
 Jinja2==2.11.1
 MarkupSafe==1.1.1
