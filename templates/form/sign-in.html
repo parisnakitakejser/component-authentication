@@ -21,5 +21,17 @@
     <button type="submit" class="btn btn-primary">
         Sign in
     </button>
+
+    <br />
+    <br />
+
+    <div style="text-align: center;">
+        {% if guest_signup %}
+            <a href="/form/sign-up?{{args}}">Create new account</a> or
+            <a href="/form/reset-password?{{args}}">Reset your password</a>
+        {% else %}
+            <a href="/form/reset-password?{{args}}">Reset your password</a>
+        {% endif %}
+    </div>
 </form>
 {% endblock %}

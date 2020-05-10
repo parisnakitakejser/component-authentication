@@ -84,3 +84,21 @@ input[type='text'], input[type='password'] {
     border: 1px solid #b21f2d;
     color: white;
 }
+
+.fw50p {
+     float: left;
+    display: block;
+    width: 50%;
+}
+
+.input_5px_less {
+    width: calc(100% - 5px);
+}
+
+.ml5 {
+    margin-left: 5px;
+}
+
+.clearfix {
+    clear: both;
+}

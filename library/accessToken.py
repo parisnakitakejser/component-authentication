@@ -65,7 +65,7 @@ class AccessToken:
                     del token['token']
                     
                 return True, {
-                    'jwt': self.__access_token.access_token,
+                    'jwt': self.__access_token.account_token,
                     'data': token
                 }
             else:

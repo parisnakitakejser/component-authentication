@@ -18,6 +18,8 @@ class FlaskForm:
         alert_class = ''
         alert_content = ''
 
+        provider = OdmProvider.objects.get(pk=request.environ['provider']['id'])
+
         if request.method == 'POST':
             email = request.form.get('email')
             password = request.form.get('password')
@@ -40,8 +42,6 @@ class FlaskForm:
                 if ObjectId(request.environ['provider']['id']) in account_data['providers']:
                     logging.info('provider found, prepare for return to pages statement')
 
-                    provider = OdmProvider.objects.get(pk=request.environ['provider']['id'])
-
                     if provider.settings.in_development:
                         logging.info('confirm access - provider is in development send to response-in-development pages')
                         return redirect(f'/form/response-in-development?{urlencode(request.args)}', code=302)
@@ -59,7 +59,9 @@ class FlaskForm:
         return render_template('form/sign-in.html', **{
             'alert_show': alert_show,
             'alert_class': alert_class,
-            'alert_content': alert_content
+            'alert_content': alert_content,
+            'guest_signup': provider.allow_guest_signup,
+            'args': f'{urlencode(request.args)}'
         })
 
     @staticmethod
@@ -82,6 +84,7 @@ class FlaskForm:
                     return redirect(f'/form/response-in-development?{urlencode(request.args)}')
 
                 else:
+                    provider = Provider(provider_id=request.environ['provider']['id'])
                     logging.info('account grant access for provider - return to rel or accept url for this provider')
                     return redirect(provider.get_accept_return_url(args=dict(request.args)))
 
@@ -99,4 +102,47 @@ class FlaskForm:
 
         return render_template('form/response-in-development.html', **{
             'site_url': provider.get_accept_return_url(args=dict(request.args))
+        })
+
+    @staticmethod
+    def sign_up():
+        provider = Provider(provider_id=request.environ['provider']['id'])
+
+        msg = []
+        resp = True
+
+        provider = OdmProvider.objects.get(pk=request.environ['provider']['id'])
+
+        if request.method == 'POST' and provider.allow_guest_signup:
+            first_name = request.form.get('first_name')
+            last_name = request.form.get('last_name')
+            email = request.form.get('email')
+            password = request.form.get('password')
+            password_confirm = request.form.get('password_confirm')
+
+            account = Account()
+            resp, msg, url_redirect, status_code = account.create(data={
+                'first_name': first_name,
+                'last_name': last_name,
+                'email': email,
+                'password': password,
+                'password_confirm': password_confirm,
+            }, sign_in=True, access_token=request.args.get('access_token'), url_args=dict(request.args))
+
+            if resp:
+                return redirect(url_redirect, code=status_code)
+
+        return render_template('form/sign-up.html', **{
+            'args': urlencode(dict(request.args)),
+            'guest_signup': provider.allow_guest_signup,
+            'resp': resp,
+            'msg': '<br />'.join(msg)
+        })
+
+    @staticmethod
+    def reset_password():
+        provider = Provider(provider_id=request.environ['provider']['id'])
+
+        return render_template('form/reset-password.html', **{
+            'args': urlencode(dict(request.args))
         })

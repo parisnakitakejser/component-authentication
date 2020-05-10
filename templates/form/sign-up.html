@@ -1,0 +1,63 @@
+{% extends 'main.html' %}
+
+{% block header %}
+    <h1>Sign up</h1>
+{% endblock %}
+
+{% block content %}
+{% if not guest_signup %}
+<div class="alert alert-warning">
+    <strong>Guest sign up disabled</strong><br />
+    This provider only accept account created by the provider owner!
+</div>
+{% else %}
+<form method="post">
+    {% if not resp %}
+    <div class="alert alert-danger">
+        <strong>Validation error</strong><br />
+         {{msg}}
+    </div>
+    {% endif %}
+
+    <label>Your name</label>
+    <div>
+        <div class="fw50p">
+            <input type="text" autofocus name="first_name" required placeholder="First name" class="input_5px_less" />
+        </div>
+        <div class="fw50p">
+            <input type="text" name="last_name" required placeholder="Last name" class="input_5px_less ml5" />
+        </div>
+        <div class="clearfix"></div>
+    </div>
+
+    <label>E-mail</label>
+    <input type="text" name="email" required />
+
+    <label>Password</label>
+    <div>
+        <div class="fw50p">
+            <input type="password" name="password" required placeholder="Password" class="input_5px_less" />
+        </div>
+        <div class="fw50p">
+            <input type="password" name="password_confirm" required placeholder="Confrim" class="input_5px_less ml5" />
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <small>Use 8 or more characters with a mix of letters, numbers & symbols.</small>
+
+    <br />
+    <br />
+
+    <button class="btn btn-primary">
+        Sign up
+    </button>
+
+    <br />
+    <br />
+
+    <div align="center">
+        <a href="/form/sign-in?{{args}}">Sign in instead</a>
+    </div>
+</form>
+{% endif %}
+{% endblock %}
