@@ -20,7 +20,7 @@ jobs:
       - run:
           name: Build Docker Image
           command: |
-            docker build -t parisnk/$IMAGE_NAME:$CIRCLE_BUILD_NUM . -f .docker\Dockerfile
+            docker build -t parisnk/$IMAGE_NAME:$CIRCLE_BUILD_NUM . -f .docker/Dockerfile
 
       - deploy:
           name: Push docker image
