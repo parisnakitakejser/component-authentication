@@ -12,11 +12,12 @@ workflows:
       #       ignore: master
 jobs:
   build:
-    working_directory: ~/
     docker:
       - image: circleci/python:3.8
-      environment:
-        IMAGE_NAME: component-authentication
+        environment:
+          IMAGE_NAME: component-authentication
+
+    working_directory: ~/
 
     steps:
       - checkout
