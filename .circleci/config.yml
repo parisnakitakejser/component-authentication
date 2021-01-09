@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  discord: antonioned/discord@0.1.0
+
 workflows:
   build_and_test:
     jobs:
@@ -17,6 +20,11 @@ workflows:
           filters:
             branches:
               only: stable
+
+      - discord/status:
+          fail_only: false
+          webhook: "${DISCORD_STATUS_WEBHOOK}"
+          success_message: "**${CIRCLE_USERNAME}** deployed new stable version to docker hub."
 
 jobs:
   build:
