@@ -16,7 +16,7 @@ jobs:
       - image: docker:18.06.3-ce-git
 
         auth:
-          username: $DOCKERHUB_USERNAME
+          username: parisnk
           password: $DOCKERHUB_PASSWORD
 
         environment:
