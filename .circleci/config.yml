@@ -39,5 +39,5 @@ jobs:
       - run:
           name: Build Docker pytest image
           command: |
-            docker build -t unittest . -f .docker\Unittest\Dockerfile
+            docker build -t unittest . -f .docker/Unittest/Dockerfile
             docker run --rm unittest
