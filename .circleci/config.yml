@@ -13,21 +13,21 @@ workflows:
 jobs:
   build:
     docker:
-      - image: docker:18.06.3-ce-git
+      - image: circleci/python:3.8
 
     steps:
       - checkout
-      # - setup_remote_docker:
-      # docker_layer_caching: true
-      - add_ssh_keys
+
+      - setup_remote_docker:
+          docker_layer_caching: true
 
       - run:
           name: Build Docker Image
           command: |
-            docker build -t "${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${CIRCLE_SHA1}" .
+            docker build -t parisnk/$IMAGE_NAME:$CIRCLE_BUILD_NUM .
 
       - deploy:
           name: Push docker image
           command: |
-            echo "${DOCKERHUB_PASSWORD}" | docker login --username ${DOCKERHUB_USERNAME} --password-stdin
-            docker push "${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${CIRCLE_SHA1}"
+            echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
+            docker push parisnk/$IMAGE_NAME:$CIRCLE_BUILD_NUM
