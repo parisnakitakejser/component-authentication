@@ -21,11 +21,6 @@ workflows:
             branches:
               only: stable
 
-      - discord/status:
-          fail_only: false
-          webhook: "${DISCORD_STATUS_WEBHOOK}"
-          success_message: "**${CIRCLE_USERNAME}** deployed new stable version to docker hub."
-
 jobs:
   build:
     docker:
@@ -89,3 +84,8 @@ jobs:
           command: |
             docker push parisnk/$IMAGE_NAME:latest
             docker push parisnk/$IMAGE_NAME:stable
+
+      - discord/status:
+          fail_only: false
+          webhook: "${DISCORD_STATUS_WEBHOOK}"
+          success_message: "**${CIRCLE_USERNAME}** deployed new stable version to docker hub."
