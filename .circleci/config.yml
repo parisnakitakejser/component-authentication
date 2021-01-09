@@ -13,7 +13,7 @@ workflows:
 jobs:
   build:
     docker:
-      - image: circleci/python:3.8
+      - image: docker:17.12.1-ce-git
 
     steps:
       - checkout
