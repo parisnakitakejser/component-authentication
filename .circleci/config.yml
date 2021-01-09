@@ -9,7 +9,7 @@ workflows:
             - test
           filters:
             branches:
-              ignore: main
+              ignore: development
 
       - deploy_stable:
           requires:
