@@ -17,7 +17,7 @@ jobs:
         environment:
           IMAGE_NAME: component-authentication
 
-    working_directory: ~/
+    working_directory: ~/app
 
     steps:
       - checkout
