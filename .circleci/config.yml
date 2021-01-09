@@ -12,6 +12,9 @@ workflows:
       #       ignore: master
 jobs:
   build:
+    machine:
+      enabled: true
+
     docker:
       - image: circleci/python:3.8
 
