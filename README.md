@@ -33,14 +33,14 @@
 
 If you found eny bugs and want to build your own images, you can do it very quickly by using this command
 
-`docker build -t component-authentication:{version} . --no-cache -f .docker/Dockerfile`
+    docker build -t component-authentication:{version} . --no-cache -f .docker/Dockerfile
 
 **Run unittest local in container**
 
 If you want to run test after you have change code or just want to check all tests out, its can be done by build a unittest images and run the unittest images after in a single docker container.
 
-`docker build -t unittest . -f .docker/Unittest/Dockerfile`
-`docker run --rm unittest`
+    docker build -t unittest . -f .docker/Unittest/Dockerfile
+    docker run --rm unittest
 
 **docker-compose.yaml sample**
 
