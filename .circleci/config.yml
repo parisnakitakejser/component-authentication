@@ -12,8 +12,11 @@ workflows:
       #       ignore: master
 jobs:
   build:
+    working_directory: ~/
     docker:
-      - image: docker:17.12.1-ce-git
+      - image: docker:python:3.8
+      environment:
+        IMAGE_NAME: component-authentication
 
     steps:
       - checkout
