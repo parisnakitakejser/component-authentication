@@ -12,16 +12,13 @@ workflows:
       #       ignore: master
 jobs:
   build:
-    machine:
-      enabled: true
-
     docker:
       - image: circleci/python:3.8
 
     steps:
       - checkout
 
-      # - setup_remote_docker:
+      - setup_remote_docker
       #     docker_layer_caching: true
 
       - run:
