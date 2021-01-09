@@ -14,38 +14,44 @@
 - Discord: https://discord.gg/6tcWjxV
 - Donate: https://www.patreon.com/parisnakitakejser
 
-
 **System environments to set**
 
-| Environment vars        | Fallback                      |
-| ----------------------- | ----------------------------- |
-| MONGO_DATABASE          | component-authentication      |
-| MONGO_HOST              | None                          |
-| MONGO_PORT              | None                          |
-| MONGO_USERNAME          | None                          |           
-| MONGO_PASSWORD          | None                          |
-| MONGO_AUTH_SOURCE       | None                          |
-| MONGO_MECHANISM         | None                          |
-| JWT_TOKEN_SECRET        | None                          |
-| SESSION_SECRET_KEY      | None                          |
-| SESSION_LIFETIME        | 604800                        |
+| Environment vars   | Fallback                 |
+| ------------------ | ------------------------ |
+| MONGO_DATABASE     | component-authentication |
+| MONGO_HOST         | None                     |
+| MONGO_PORT         | None                     |
+| MONGO_USERNAME     | None                     |
+| MONGO_PASSWORD     | None                     |
+| MONGO_AUTH_SOURCE  | None                     |
+| MONGO_MECHANISM    | None                     |
+| JWT_TOKEN_SECRET   | None                     |
+| SESSION_SECRET_KEY | None                     |
+| SESSION_LIFETIME   | 604800                   |
 
 **Build new images**
 
 If you found eny bugs and want to build your own images, you can do it very quickly by using this command
 
-`docker build -t component-authentication:{version} . --no-cache`
+`docker build -t component-authentication:{version} . --no-cache -f .docker/Dockerfile`
+
+**Run unittest local in container**
+
+If you want to run test after you have change code or just want to check all tests out, its can be done by build a unittest images and run the unittest images after in a single docker container.
+
+`docker build -t unittest . -f .docker/Unittest/Dockerfile`
+`docker run --rm unittest`
 
 **docker-compose.yaml sample**
 
     version: "3.7"
-    
+
     services:
         component-authentication:
             image: parisnk/component-authentication
             ports:
                 - "5000:5000"
-    
+
             environment:
                 - MONGO_DATABASE=component-authentication
                 - MONGO_HOST={hostname}
