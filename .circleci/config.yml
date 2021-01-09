@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  discord: parisnakitakejser/circleci-discord-orb
+  discord: antonioned/discord@0.1.0
 
 workflows:
   build_and_test:
