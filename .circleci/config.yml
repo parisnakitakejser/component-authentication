@@ -32,6 +32,12 @@ jobs:
           command: |
             docker build -t parisnk/$IMAGE_NAME:$CIRCLE_SHA1 . -f .docker/Dockerfile
 
+      - deploy:
+          name: Deploy docker images to docker hub
+          command: |
+            echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin
+            docker push parisnk/$IMAGE_NAME:$CIRCLE_SHA1
+
   test:
     docker:
       - image: circleci/python:3.8
