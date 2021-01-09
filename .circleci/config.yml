@@ -1,38 +1,33 @@
 version: 2.1
 
-orbs:
-  python: circleci/python@0.2.1
-
 workflows:
   build_and_test:
     jobs:
-        - build
-        # - test:
-        #   requires:
-        #     - build
-        #   filters:
-        #     branches:
-        #       ignore: master
+      - build
+      # - test:
+      #   requires:
+      #     - build
+      #   filters:
+      #     branches:
+      #       ignore: master
 jobs:
   build:
     docker:
-      - image: circleci/python:3.8
-        auth:
-          username: $DOCKERHUB_USERNAME
-          password: $DOCKERHUB_PASSWORD
+      - image: docker:17.12.1-ce-git
 
     steps:
       - checkout
       - setup_remote_docker:
           docker_layer_caching: true
- 
+      - add_ssh_keys
+
       - run:
           name: Build Docker Image
           command: |
             docker build --build-arg ACF_PRO_KEY=${ACF_PRO_KEY} -t "${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${CIRCLE_SHA1}" .
-    
+
       - deploy:
           name: Push docker image
           command: |
-            echo "$DOCKERHUB_PASS" | docker login --username ${DOCKERHUB_USERNAME} --password-stdin
+            echo "$DOCKERHUB_PASSWORD" | docker login --username ${DOCKERHUB_USERNAME} --password-stdin
             docker push "${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${CIRCLE_SHA1}"
