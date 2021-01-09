@@ -24,7 +24,7 @@ jobs:
       - run:
           name: Build Docker Image
           command: |
-            docker build --build-arg ACF_PRO_KEY=${ACF_PRO_KEY} -t "${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${CIRCLE_SHA1}" .
+            docker build -t "${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${CIRCLE_SHA1}" .
 
       - deploy:
           name: Push docker image
