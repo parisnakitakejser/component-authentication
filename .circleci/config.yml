@@ -14,10 +14,13 @@ jobs:
   build:
     docker:
       - image: docker:18.06.3-ce-git
+
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_PASSWORD
+
         environment:
           IMAGE_NAME: component-authentication
-
-    working_directory: ~/app
 
     steps:
       - checkout
@@ -28,10 +31,10 @@ jobs:
       - run:
           name: Build Docker Image
           command: |
-            docker build -t "${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${CIRCLE_SHA1}" .
+            docker build -t "${DOCKER_USER}/${IMAGE_NAME}:${CIRCLE_SHA1}" .
 
       - deploy:
           name: Push docker image
           command: |
-            echo "${DOCKERHUB_PASSWORD}" | docker login --username ${DOCKERHUB_USERNAME} --password-stdin
-            docker push "${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${CIRCLE_SHA1}"
+            echo "${DOCKER_PASS}" | docker login --username ${DOCKER_USER} --password-stdin
+            docker push "${DOCKER_USER}/${IMAGE_NAME}:${CIRCLE_SHA1}"
