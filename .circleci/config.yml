@@ -15,13 +15,6 @@ jobs:
     docker:
       - image: docker:18.06.3-ce-git
 
-        auth:
-          username: parisnk
-          password: $DOCKERHUB_PASSWORD
-
-        environment:
-          IMAGE_NAME: component-authentication
-
     steps:
       - checkout
       # - setup_remote_docker:
@@ -31,10 +24,10 @@ jobs:
       - run:
           name: Build Docker Image
           command: |
-            docker build -t "${DOCKER_USER}/${IMAGE_NAME}:${CIRCLE_SHA1}" .
+            docker build -t "${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${CIRCLE_SHA1}" .
 
       - deploy:
           name: Push docker image
           command: |
-            echo "${DOCKER_PASS}" | docker login --username ${DOCKER_USER} --password-stdin
-            docker push "${DOCKER_USER}/${IMAGE_NAME}:${CIRCLE_SHA1}"
+            echo "${DOCKERHUB_PASSWORD}" | docker login --username ${DOCKERHUB_USERNAME} --password-stdin
+            docker push "${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${CIRCLE_SHA1}"
